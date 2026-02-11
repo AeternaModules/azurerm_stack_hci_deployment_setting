@@ -75,10 +75,10 @@ EOT
     arc_resource_ids     = list(string)
     stack_hci_cluster_id = string
     version              = string
-    scale_unit = object({
+    scale_unit = list(object({
       active_directory_organizational_unit_path = string
-      bitlocker_boot_volume_enabled             = optional(bool, true)
-      bitlocker_data_volume_enabled             = optional(bool, true)
+      bitlocker_boot_volume_enabled             = optional(bool) # Default: true
+      bitlocker_data_volume_enabled             = optional(bool) # Default: true
       cluster = object({
         azure_service_endpoint = string
         cloud_account_name     = string
@@ -86,72 +86,120 @@ EOT
         witness_path           = string
         witness_type           = string
       })
-      credential_guard_enabled     = optional(bool, false)
+      credential_guard_enabled     = optional(bool) # Default: false
       domain_fqdn                  = string
-      drift_control_enabled        = optional(bool, true)
-      drtm_protection_enabled      = optional(bool, true)
-      episodic_data_upload_enabled = optional(bool, true)
-      eu_location_enabled          = optional(bool, false)
+      drift_control_enabled        = optional(bool) # Default: true
+      drtm_protection_enabled      = optional(bool) # Default: true
+      episodic_data_upload_enabled = optional(bool) # Default: true
+      eu_location_enabled          = optional(bool) # Default: false
       host_network = object({
-        intent = object({
+        intent = list(object({
           adapter = list(string)
           adapter_property_override = optional(object({
             jumbo_packet              = optional(string)
             network_direct            = optional(string)
             network_direct_technology = optional(string)
           }))
-          adapter_property_override_enabled = optional(bool, false)
+          adapter_property_override_enabled = optional(bool) # Default: false
           name                              = string
           qos_policy_override = optional(object({
             bandwidth_percentage_smb          = optional(string)
             priority_value8021_action_cluster = optional(string)
             priority_value8021_action_smb     = optional(string)
           }))
-          qos_policy_override_enabled = optional(bool, false)
+          qos_policy_override_enabled = optional(bool) # Default: false
           traffic_type                = list(string)
           virtual_switch_configuration_override = optional(object({
             enable_iov               = optional(string)
             load_balancing_algorithm = optional(string)
           }))
-          virtual_switch_configuration_override_enabled = optional(bool, false)
-        })
-        storage_auto_ip_enabled                 = optional(bool, true)
-        storage_connectivity_switchless_enabled = optional(bool, false)
-        storage_network = object({
+          virtual_switch_configuration_override_enabled = optional(bool) # Default: false
+        }))
+        storage_auto_ip_enabled                 = optional(bool) # Default: true
+        storage_connectivity_switchless_enabled = optional(bool) # Default: false
+        storage_network = list(object({
           name                 = string
           network_adapter_name = string
           vlan_id              = string
-        })
+        }))
       })
-      hvci_protection_enabled = optional(bool, true)
-      infrastructure_network = object({
-        dhcp_enabled = optional(bool, false)
+      hvci_protection_enabled = optional(bool) # Default: true
+      infrastructure_network = list(object({
+        dhcp_enabled = optional(bool) # Default: false
         dns_server   = list(string)
         gateway      = string
-        ip_pool = object({
+        ip_pool = list(object({
           ending_address   = string
           starting_address = string
-        })
+        }))
         subnet_mask = string
-      })
+      }))
       name_prefix = string
       optional_service = object({
         custom_location = string
       })
-      physical_node = object({
+      physical_node = list(object({
         ipv4_address = string
         name         = string
-      })
+      }))
       secrets_location                = string
-      side_channel_mitigation_enabled = optional(bool, true)
-      smb_cluster_encryption_enabled  = optional(bool, false)
-      smb_signing_enabled             = optional(bool, true)
+      side_channel_mitigation_enabled = optional(bool) # Default: true
+      smb_cluster_encryption_enabled  = optional(bool) # Default: false
+      smb_signing_enabled             = optional(bool) # Default: true
       storage = object({
         configuration_mode = string
       })
-      streaming_data_client_enabled = optional(bool, true)
-      wdac_enabled                  = optional(bool, true)
-    })
+      streaming_data_client_enabled = optional(bool) # Default: true
+      wdac_enabled                  = optional(bool) # Default: true
+    }))
   }))
+  validation {
+    condition = alltrue([
+      for k, v in var.stack_hci_deployment_settings : (
+        length(v.scale_unit) >= 1
+      )
+    ])
+    error_message = "Each scale_unit list must contain at least 1 items"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stack_hci_deployment_settings : (
+        alltrue([for item in v.scale_unit : (length(item.host_network.intent) >= 1)])
+      )
+    ])
+    error_message = "Each intent list must contain at least 1 items"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stack_hci_deployment_settings : (
+        alltrue([for item in v.scale_unit : (length(item.host_network.storage_network) >= 1)])
+      )
+    ])
+    error_message = "Each storage_network list must contain at least 1 items"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stack_hci_deployment_settings : (
+        alltrue([for item in v.scale_unit : (length(item.infrastructure_network) >= 1)])
+      )
+    ])
+    error_message = "Each infrastructure_network list must contain at least 1 items"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stack_hci_deployment_settings : (
+        alltrue([for item in v.scale_unit : (length(item.ip_pool) >= 1)])
+      )
+    ])
+    error_message = "Each ip_pool list must contain at least 1 items"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stack_hci_deployment_settings : (
+        alltrue([for item in v.scale_unit : (length(item.physical_node) >= 1)])
+      )
+    ])
+    error_message = "Each physical_node list must contain at least 1 items"
+  }
 }
 
