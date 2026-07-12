@@ -1,3 +1,7 @@
+output "stack_hci_deployment_settings_id" {
+  description = "Map of id values across all stack_hci_deployment_settings, keyed the same as var.stack_hci_deployment_settings"
+  value       = { for k, v in azurerm_stack_hci_deployment_setting.stack_hci_deployment_settings : k => v.id }
+}
 output "stack_hci_deployment_settings_arc_resource_ids" {
   description = "Map of arc_resource_ids values across all stack_hci_deployment_settings, keyed the same as var.stack_hci_deployment_settings"
   value       = { for k, v in azurerm_stack_hci_deployment_setting.stack_hci_deployment_settings : k => v.arc_resource_ids }
