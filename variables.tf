@@ -188,7 +188,7 @@ EOT
   validation {
     condition = alltrue([
       for k, v in var.stack_hci_deployment_settings : (
-        alltrue([for item in v.scale_unit : (length(item.ip_pool) >= 1)])
+        alltrue([for item in v.scale_unit : (alltrue([for item in item.infrastructure_network : (length(item.ip_pool) >= 1)]))])
       )
     ])
     error_message = "Each ip_pool list must contain at least 1 items"
