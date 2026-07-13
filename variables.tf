@@ -77,8 +77,8 @@ EOT
     version              = string
     scale_unit = list(object({
       active_directory_organizational_unit_path = string
-      bitlocker_boot_volume_enabled             = optional(bool) # Default: true
-      bitlocker_data_volume_enabled             = optional(bool) # Default: true
+      bitlocker_boot_volume_enabled             = optional(bool)
+      bitlocker_data_volume_enabled             = optional(bool)
       cluster = object({
         azure_service_endpoint = string
         cloud_account_name     = string
@@ -86,12 +86,12 @@ EOT
         witness_path           = string
         witness_type           = string
       })
-      credential_guard_enabled     = optional(bool) # Default: false
+      credential_guard_enabled     = optional(bool)
       domain_fqdn                  = string
-      drift_control_enabled        = optional(bool) # Default: true
-      drtm_protection_enabled      = optional(bool) # Default: true
-      episodic_data_upload_enabled = optional(bool) # Default: true
-      eu_location_enabled          = optional(bool) # Default: false
+      drift_control_enabled        = optional(bool)
+      drtm_protection_enabled      = optional(bool)
+      episodic_data_upload_enabled = optional(bool)
+      eu_location_enabled          = optional(bool)
       host_network = object({
         intent = list(object({
           adapter = list(string)
@@ -100,32 +100,32 @@ EOT
             network_direct            = optional(string)
             network_direct_technology = optional(string)
           }))
-          adapter_property_override_enabled = optional(bool) # Default: false
+          adapter_property_override_enabled = optional(bool)
           name                              = string
           qos_policy_override = optional(object({
             bandwidth_percentage_smb          = optional(string)
             priority_value8021_action_cluster = optional(string)
             priority_value8021_action_smb     = optional(string)
           }))
-          qos_policy_override_enabled = optional(bool) # Default: false
+          qos_policy_override_enabled = optional(bool)
           traffic_type                = list(string)
           virtual_switch_configuration_override = optional(object({
             enable_iov               = optional(string)
             load_balancing_algorithm = optional(string)
           }))
-          virtual_switch_configuration_override_enabled = optional(bool) # Default: false
+          virtual_switch_configuration_override_enabled = optional(bool)
         }))
-        storage_auto_ip_enabled                 = optional(bool) # Default: true
-        storage_connectivity_switchless_enabled = optional(bool) # Default: false
+        storage_auto_ip_enabled                 = optional(bool)
+        storage_connectivity_switchless_enabled = optional(bool)
         storage_network = list(object({
           name                 = string
           network_adapter_name = string
           vlan_id              = string
         }))
       })
-      hvci_protection_enabled = optional(bool) # Default: true
+      hvci_protection_enabled = optional(bool)
       infrastructure_network = list(object({
-        dhcp_enabled = optional(bool) # Default: false
+        dhcp_enabled = optional(bool)
         dns_server   = list(string)
         gateway      = string
         ip_pool = list(object({
@@ -143,14 +143,14 @@ EOT
         name         = string
       }))
       secrets_location                = string
-      side_channel_mitigation_enabled = optional(bool) # Default: true
-      smb_cluster_encryption_enabled  = optional(bool) # Default: false
-      smb_signing_enabled             = optional(bool) # Default: true
+      side_channel_mitigation_enabled = optional(bool)
+      smb_cluster_encryption_enabled  = optional(bool)
+      smb_signing_enabled             = optional(bool)
       storage = object({
         configuration_mode = string
       })
-      streaming_data_client_enabled = optional(bool) # Default: true
-      wdac_enabled                  = optional(bool) # Default: true
+      streaming_data_client_enabled = optional(bool)
+      wdac_enabled                  = optional(bool)
     }))
   }))
   validation {
